@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E7">
+<meta name="color-scheme" content="light">
+<title>八宅游年盘</title>
+<style>
+:root{
+  --paper:#F6F1E7; --ink:#23211C; --sub:#7C7566; --line:#D9D0BE;
+  --green:#2F6B50; --green-d:#24523D; --green-t:#EAF1EA; --green-b:#C9D8CB;
+  --red:#A93B2B; --red-d:#8A2F23; --red-t:#F9EEEA; --red-b:#E5C9BF;
+  --gold-d:#6B5B3E; --gold-t:#F1EAD9; --gold-b:#DCCBAC;
+  --cream:#FBF7EC; --cream-b:#DCD3BF;
+  --card:#FFFFFF; --card-b:#E3DBC9;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"HarmonyOS Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.lock{overflow:hidden}
+.app{max-width:420px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom))}
+.overline{display:flex;justify-content:space-between;font-size:10px;letter-spacing:2.5px;color:var(--sub);line-height:1.5}
+.title-row{display:flex;align-items:center;gap:12px;margin-top:16px;min-height:38px}
+h1{font-size:30px;font-weight:700;margin:0;line-height:1.1}
+.chip{font-size:11px;line-height:1;padding:6px 10px;border-radius:11px;border:1px solid var(--green-b);background:var(--green-t);color:var(--green-d);font-weight:500;white-space:nowrap}
+.chip.west{border-color:var(--gold-b);background:var(--gold-t);color:var(--gold-d)}
+.sub{margin:8px 0 0;font-size:12px;color:var(--sub);line-height:1.5}
+.sub .v{color:var(--green-d);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:24px}
+.cell{position:relative;aspect-ratio:1/1;width:100%;border-radius:12px;border:1px solid var(--line);padding:9px 6px 8px;display:flex;flex-direction:column;align-items:center;font-family:inherit;color:inherit;background:#fff;cursor:pointer;transition:transform .12s ease;appearance:none;-webkit-appearance:none;text-align:center}
+.cell:active{transform:scale(.97)}
+.cell.ji{background:var(--green-t);border-color:var(--green-b)}
+.cell.xiong{background:var(--red-t);border-color:var(--red-b)}
+.cell.center{background:var(--cream);border-color:var(--cream-b);cursor:default;justify-content:center}
+.cell.center:active{transform:none}
+.cell .name{font-size:16px;font-weight:600;line-height:1.15;color:var(--ink)}
+.cell .dir{font-size:9px;color:var(--sub);letter-spacing:1px;margin-top:1px}
+.cell .trigram{width:42px;height:26px;margin-top:7px;flex:none}
+.cell .pill{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 9px;border-radius:999px;font-size:11px;font-weight:500;line-height:1;color:#fff;background:var(--green);white-space:nowrap}
+.cell.xiong .pill{background:var(--red)}
+.center .taichi{width:56px;height:56px;flex:none}
+.center .label{font-size:9px;letter-spacing:2px;color:var(--sub);margin-top:9px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;margin-top:18px;font-size:10px;line-height:1.4;color:var(--green-d)}
+.legend .grp{display:flex;align-items:center;white-space:nowrap}
+.legend .grp.x{color:var(--red-d)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;flex:none}
+.legend .grp.x .dot{background:var(--red)}
+h2{font-size:12px;font-weight:600;margin:0}
+.door{margin-top:24px}
+.door-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mode-switch{display:flex;padding:2px;background:#EDE6D8;border-radius:8px;gap:2px}
+.mode-btn{appearance:none;-webkit-appearance:none;border:none;background:transparent;font-family:inherit;font-size:10px;line-height:1;color:var(--sub);padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.mode-btn[aria-selected="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(35,33,28,.10)}
+.door-hint{margin:8px 0 0;font-size:9px;color:var(--sub);line-height:1.5}
+.door-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.door-opt{height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;cursor:pointer;appearance:none;-webkit-appearance:none;transition:background .15s,border-color .15s}
+.door-opt .d{font-size:19px;font-weight:600;line-height:1}
+.door-opt .g{font-size:10px;line-height:1;color:var(--sub)}
+.door-opt[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.door-opt[aria-pressed="true"] .g{color:var(--paper);opacity:.85}
+.advice{margin-top:22px;background:var(--card);border:1px solid var(--card-b);border-radius:12px;padding:14px}
+.advice-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.advice-head span{font-size:9px;color:var(--sub);white-space:nowrap}
+.advice-row{display:flex;gap:10px;margin-top:12px;align-items:flex-start}
+.tag{flex:none;width:20px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;line-height:1;color:#fff;background:var(--green);margin-top:2px}
+.tag.x{background:var(--red)}
+.vals{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px;font-size:11px;line-height:1.65;color:var(--green-d);flex:1;min-width:0}
+.vals .adv-item{white-space:nowrap}
+
+.advice-row.x .vals{color:var(--red-d)}
+.actions{display:grid;grid-template-columns:1.2fr 1fr .92fr;gap:8px;margin-top:22px}
+.btn{height:46px;border-radius:10px;border:1px solid var(--line);background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none}
+.btn:active{opacity:.85}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:600}
+.cell,.door-opt,.btn,.sheet-close{touch-action:manipulation}
+.footnote{margin:14px 0 0;text-align:center;font-size:9px;color:var(--sub);letter-spacing:.5px}
+.sheet-wrap{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet-wrap[hidden]{display:none!important}
+.backdrop{position:absolute;inset:0;background:rgba(35,33,28,.35)}
+.sheet{position:relative;width:100%;max-width:420px;background:var(--paper);border-radius:18px 18px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 34px rgba(0,0,0,.14);animation:sheetUp .22s ease}
+@keyframes sheetUp{from{transform:translateY(26px);opacity:.5}to{transform:translateY(0);opacity:1}}
+.sheet-bar{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.sheet-top{display:flex;align-items:center;gap:8px}
+.sheet-palace{font-size:11px;color:var(--sub);letter-spacing:1px}
+.badge{font-size:9px;line-height:1;padding:4px 8px;border-radius:999px;color:#fff;background:var(--green)}
+.badge.x{background:var(--red)}
+.sheet-close{margin-left:auto;width:30px;height:30px;border:none;background:transparent;font-size:20px;line-height:1;color:var(--sub);cursor:pointer;font-family:inherit}
+.sheet-title{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.sheet-title h3{font-size:22px;font-weight:700;margin:0}
+.sheet-title span{font-size:10px;color:var(--sub)}
+.sheet-row{display:flex;gap:10px;margin-top:14px}
+.sheet-row .k{flex:none;width:32px;font-size:10px;color:var(--sub);padding-top:3px}
+.sheet-row p{margin:0;font-size:12px;line-height:1.65}
+.sheet-row.yi p{color:var(--green-d)}
+.sheet-row.ji p{color:var(--red-d)}
+@media (max-width:340px){
+  .cell{padding:6px 4px}
+  .cell .name{font-size:14px}
+  .cell .dir{font-size:8px}
+  .cell .trigram{width:34px;height:21px;margin-top:4px}
+  .cell .pill{height:18px;font-size:10px;padding:0 7px}
+  .center .taichi{width:46px;height:46px}
+  .legend{font-size:9px}
+  .advice{padding:12px}
+}
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:rgba(35,33,28,.92);color:#fff;font-size:12px;line-height:1;padding:10px 16px;border-radius:999px;z-index:70;white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis}
+.img-sheet{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,18,15,.92);padding:24px 16px calc(24px + env(safe-area-inset-bottom))}
+.img-sheet img{max-width:100%;max-height:72vh;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.img-hint{color:#F6F1E7;font-size:12px;margin:14px 0 0;letter-spacing:1px}
+.img-close{margin-top:14px;height:38px;padding:0 26px;border-radius:19px;border:1px solid rgba(246,241,231,.5);background:transparent;color:#F6F1E7;font-family:inherit;font-size:12px;cursor:pointer}
+@media print{
+  body{background:#fff}
+  .door,.actions,.footnote,.sheet-wrap,.toast{display:none!important}
+  .app{max-width:520px;padding:0;margin:0 auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="八宅游年盘">
+</head>
+<body>
+<noscript><p style="padding:16px;font-size:13px">请开启浏览器的 JavaScript 后再使用。</p></noscript>
+<main class="app">
+  <header>
+    <div class="overline"><span>后天八卦 · 八宅游年</span><span>上南 · 下北</span></div>
+    <div class="title-row"><h1 id="zhaiName">震宅</h1><span class="chip" id="zhaiChip">东四宅</span></div>
+    <p class="sub" id="subLine">大门朝东 · 伏位 <b class="v">震</b></p>
+  </header>
+
+  <section class="grid" id="grid" aria-label="八宅游年九宫盘"></section>
+
+  <div class="legend">
+    <span class="grp"><i class="dot"></i>四吉 · 生气 延年 天医 伏位</span>
+    <span class="grp x"><i class="dot"></i>四凶 · 祸害 六煞 五鬼 绝命</span>
+  </div>
+
+  <section class="door">
+    <div class="door-head">
+      <h2>定伏位</h2>
+      <div class="mode-switch" id="modeSwitch" role="tablist" aria-label="伏位依据">
+        <button type="button" class="mode-btn" data-mode="wei" role="tab" aria-selected="false">门位法</button>
+        <button type="button" class="mode-btn" data-mode="xiang" role="tab" aria-selected="true">门向法</button>
+      </div>
+    </div>
+    <p class="door-hint" id="doorHint">门向法：按大门所朝方向定伏位，只取四正（不是门的位置）</p>
+    <div class="door-opts" id="doorOpts"></div>
+  </section>
+
+  <section class="advice">
+    <div class="advice-head"><h2>开门建议</h2><span>宜四吉 · 忌四凶</span></div>
+    <div class="advice-row"><span class="tag">宜</span><div class="vals" id="adviceJi"></div></div>
+    <div class="advice-row x"><span class="tag x">忌</span><div class="vals" id="adviceXiong"></div></div>
+  </section>
+
+  <div class="actions">
+    <button type="button" class="btn primary" id="btnPng">导出图片</button>
+    <button type="button" class="btn" id="btnCopy">复制文案</button>
+    <button type="button" class="btn" id="btnPrint">打印 A4</button>
+  </div>
+  <p class="footnote">仅供传统文化参考 · 点宫格查看星义</p>
+</main>
+
+<div class="sheet-wrap" id="sheetWrap" hidden>
+  <div class="backdrop" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetStar">
+    <div class="sheet-bar"></div>
+    <div class="sheet-top">
+      <span class="sheet-palace" id="sheetPalace"></span>
+      <span class="badge" id="sheetBadge"></span>
+      <button type="button" class="sheet-close" id="sheetClose" aria-label="关闭">×</button>
+    </div>
+    <div class="sheet-title"><h3 id="sheetStar"></h3><span id="sheetMeta"></span></div>
+    <div class="sheet-row"><span class="k">主事</span><p id="sheetZhu"></p></div>
+    <div class="sheet-row yi"><span class="k">宜</span><p id="sheetYi"></p></div>
+    <div class="sheet-row ji"><span class="k">忌</span><p id="sheetJi"></p></div>
+  </div>
+</div>
+
+<div class="img-sheet" id="imgSheet" hidden>
+  <img id="imgOut" alt="导出图片">
+  <p class="img-hint">长按图片 → 存储到照片</p>
+  <button type="button" class="img-close" id="imgClose">关闭</button>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* CORE:START */
+var GUA = {
+  '乾': { dir: '西北', num: 6, lines: [1,1,1], wuxing: '金' },
+  '兑': { dir: '西',   num: 7, lines: [1,1,0], wuxing: '金' },
+  '离': { dir: '南',   num: 9, lines: [1,0,1], wuxing: '火' },
+  '震': { dir: '东',   num: 3, lines: [1,0,0], wuxing: '木' },
+  '巽': { dir: '东南', num: 4, lines: [0,1,1], wuxing: '木' },
+  '坎': { dir: '北',   num: 1, lines: [0,1,0], wuxing: '水' },
+  '艮': { dir: '东北', num: 8, lines: [0,0,1], wuxing: '土' },
+  '坤': { dir: '西南', num: 2, lines: [0,0,0], wuxing: '土' }
+};
+var GRID3 = [['巽','离','坤'],['震',null,'兑'],['艮','坎','乾']];
+var DOORS = [['东','震'],['南','离'],['西','兑'],['北','坎']];
+var CYCLE = ['坎','艮','震','巽','离','坤','兑','乾'];
+var STAR = {
+  '生气': { isJi: true,  rank: 0, wuxing: '木', gui: '贪狼', zhu: '生机、财运、官运、子嗣', yi: '主卧、书房、大门、动线', ji: '厕所、杂物堆积' },
+  '延年': { isJi: true,  rank: 1, wuxing: '金', gui: '武曲', zhu: '和睦、长寿、人缘、婚姻', yi: '主卧、客厅、餐桌', ji: '杂物、厕所' },
+  '天医': { isJi: true,  rank: 2, wuxing: '土', gui: '巨门', zhu: '健康、疗愈、贵人', yi: '主卧、老人房、餐桌', ji: '厕所、重物压制' },
+  '伏位': { isJi: true,  rank: 3, wuxing: '木', gui: '辅弼', zhu: '平稳、守成、安定', yi: '书房、卧室、静区', ji: '嘈杂、大门直冲' },
+  '祸害': { isJi: false, rank: 4, wuxing: '土', gui: '禄存', zhu: '口舌、是非、小人', yi: '储物、卫生间、过道', ji: '主卧、大门、厨房' },
+  '六煞': { isJi: false, rank: 5, wuxing: '水', gui: '文曲', zhu: '桃花、是非、忧郁', yi: '卫生间、储藏、过道', ji: '主卧、厨房' },
+  '五鬼': { isJi: false, rank: 6, wuxing: '火', gui: '廉贞', zhu: '火灾、盗贼、官非、病灾', yi: '储物、卫生间、化煞位', ji: '大门、主卧、厨房' },
+  '绝命': { isJi: false, rank: 7, wuxing: '金', gui: '破军', zhu: '重病、意外、损丁', yi: '储物、卫生间、化煞位', ji: '大门、主卧、厨房' }
+};
+var FLIP = { '上': '生气', '下': '祸害', '中': '绝命', '上中': '五鬼', '中下': '天医', '上中下': '延年', '上下': '六煞', '': '伏位' };
+var SONGS = {
+  '乾': '乾六天五祸绝延生', '坎': '坎五天生延绝祸六',
+  '艮': '艮六绝祸生延天五', '震': '震延生祸绝五天六',
+  '巽': '巽天五六祸生绝延', '离': '离六五绝延祸生天',
+  '坤': '坤天延绝生祸五六', '兑': '兑生祸延绝六五天'
+};
+var SONG_CHAR = { '六': '六煞', '天': '天医', '五': '五鬼', '祸': '祸害', '绝': '绝命', '延': '延年', '生': '生气' };
+
+function starOf(fuwei, palace) {
+  var a = GUA[fuwei].lines, b = GUA[palace].lines, s = '';
+  if (a[2] !== b[2]) s += '上';
+  if (a[1] !== b[1]) s += '中';
+  if (a[0] !== b[0]) s += '下';
+  return FLIP[s];
+}
+function palaceOfStar(fuwei, star) {
+  for (var i = 0; i < CYCLE.length; i++) {
+    if (starOf(fuwei, CYCLE[i]) === star) return CYCLE[i];
+  }
+  return '';
+}
+function dirOfStar(fuwei, star) {
+  var g = palaceOfStar(fuwei, star);
+  return g ? GUA[g].dir : '';
+}
+function zhaiType(fuwei) {
+  return (['坎','震','巽','离'].indexOf(fuwei) >= 0) ? '东四宅' : '西四宅';
+}
+function selftest() {
+  var ok = true, rows = [];
+  for (var i = 0; i < CYCLE.length; i++) {
+    var f = CYCLE[i], idx = CYCLE.indexOf(f), order = [], k;
+    for (k = 1; k <= 7; k++) order.push(CYCLE[(idx + k) % 8]);
+    var song = SONGS[f].slice(1).split('').map(function (ch) { return SONG_CHAR[ch]; });
+    var calc = order.map(function (p) { return starOf(f, p); });
+    var songOk = song.every(function (s, n) { return s === calc[n]; });
+    var ji = 0, j;
+    for (j = 0; j < CYCLE.length; j++) if (STAR[starOf(f, CYCLE[j])].isJi) ji++;
+    var eastOk = ['生气','延年','天医','伏位'].every(function (s) {
+      var p = palaceOfStar(f, s);
+      return (['坎','震','巽','离'].indexOf(p) >= 0) === (['坎','震','巽','离'].indexOf(f) >= 0);
+    });
+    var rowOk = songOk && ji === 4 && eastOk;
+    if (!rowOk) ok = false;
+    rows.push({ fuwei: f, songOk: songOk, jiCount: ji, eastOk: eastOk, ok: rowOk });
+  }
+  return { ok: ok, rows: rows };
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function tw(s, size) {
+  var n = 0, i, c;
+  for (i = 0; i < s.length; i++) {
+    c = s.charCodeAt(i);
+    n += ((c >= 0x3000 && c <= 0x9fff) || (c >= 0xff00 && c <= 0xffef)) ? 1 : 0.56;
+  }
+  return n * size;
+}
+function T(x, y, s, o) {
+  o = o || {};
+  var size = o.size || 12, fill = o.fill || '#000', weight = o.weight || 400;
+  var anchor = o.anchor || 'start', family = o.family || 'sans-serif', ls = o.ls || 0;
+  var op = (o.opacity === undefined) ? 1 : o.opacity;
+  var a = '<text x="' + x + '" y="' + y + '" font-family="' + family + '" font-size="' + size +
+    '" fill="' + fill + '" font-weight="' + weight + '" text-anchor="' + anchor + '"';
+  if (ls) a += ' letter-spacing="' + ls + '"';
+  if (op !== 1) a += ' opacity="' + op + '"';
+  return a + '>' + esc(s) + '</text>';
+}
+function R(x, y, w, h, o) {
+  o = o || {};
+  var a = '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (o.rx || 0) + '"';
+  a += ' fill="' + (o.fill || 'none') + '"';
+  if (o.stroke && o.stroke !== 'none') a += ' stroke="' + o.stroke + '" stroke-width="' + (o.sw || 1) + '"';
+  if (o.opacity !== undefined) a += ' opacity="' + o.opacity + '"';
+  return a + '/>';
+}
+function C(cx, cy, r, o) {
+  o = o || {};
+  var a = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + (o.fill || 'none') + '"';
+  if (o.stroke && o.stroke !== 'none') a += ' stroke="' + o.stroke + '" stroke-width="' + (o.sw || 1) + '"';
+  return a + '/>';
+}
+function guaLines(cx, cy, lines, o) {
+  o = o || {};
+  var w = o.w || 42, gap = o.gap || 10, h = o.h || 3.6;
+  var color = o.color || '#23211C';
+  var op = (o.opacity === undefined) ? 0.88 : o.opacity;
+  var seg = (w - 7) / 2;
+  var out = '', i, y, top;
+  for (i = 0; i < 3; i++) {
+    y = cy + (i === 0 ? gap : (i === 1 ? 0 : -gap));
+    top = y - h / 2;
+    if (lines[i] === 1) {
+      out += R(cx - w / 2, top, w, h, { rx: h / 2, fill: color, opacity: op });
+    } else {
+      out += R(cx - w / 2, top, seg, h, { rx: h / 2, fill: color, opacity: op });
+      out += R(cx + w / 2 - seg, top, seg, h, { rx: h / 2, fill: color, opacity: op });
+    }
+  }
+  return out;
+}
+function taichiSVG(cx, cy, r, ink, paper, sw) {
+  var d = 'M ' + cx + ' ' + (cy - r) +
+    ' A ' + r + ' ' + r + ' 0 0 1 ' + cx + ' ' + (cy + r) +
+    ' A ' + (r / 2) + ' ' + (r / 2) + ' 0 0 0 ' + cx + ' ' + cy +
+    ' A ' + (r / 2) + ' ' + (r / 2) + ' 0 0 1 ' + cx + ' ' + (cy - r) + ' Z';
+  return C(cx, cy, r, { fill: paper, stroke: ink, sw: sw || 1.4 }) +
+    '<path d="' + d + '" fill="' + ink + '"/>' +
+    C(cx, cy - r / 2, r / 6, { fill: paper }) +
+    C(cx, cy + r / 2, r / 6, { fill: ink });
+}
+function tagSVG(x, y, label, bg, fg, stroke, rx) {
+  return R(x, y, 20, 16, { rx: rx || 3, fill: bg, stroke: stroke || 'none', sw: 1 }) +
+    T(x + 10, y + 12, label, { size: 10, fill: fg, weight: 600, anchor: 'middle', family: 'HarmonyOS Sans SC, Noto Sans CJK SC, sans-serif' });
+}
+function pad2(n) { return n < 10 ? '0' + n : String(n); }
+
+function buildExportSVG(fuweiName, mode, dateObj) {
+  var W = 390, H = 652, PAD = 16, GW = 358, GAP = 6;
+  var CELL = (GW - 2 * GAP) / 3;
+  var ink = '#23211C', sub = '#7C7566', paper = '#F6F1E7';
+  var green = '#2F6B50', greenD = '#24523D', red = '#A93B2B', redD = '#8A2F23';
+  var line = '#D9D0BE', card = '#FFFFFF', cardBd = '#E3DBC9';
+  var fam = 'HarmonyOS Sans SC, Noto Sans CJK SC, sans-serif';
+  var isEast = zhaiType(fuweiName) === '东四宅';
+  var isWei = mode === 'wei';
+  var doorDir = GUA[fuweiName].dir;
+  var zt = zhaiType(fuweiName);
+  var d = dateObj || new Date();
+  var dateStr = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  var chipBg = isEast ? '#EAF1EA' : '#F1EAD9';
+  var chipBd = isEast ? '#C9D8CB' : '#DCCBAC';
+  var chipTx = isEast ? greenD : '#6B5B3E';
+  var p = [];
+  p.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + (W * 2) + '" height="' + (H * 2) + '" viewBox="0 0 ' + W + ' ' + H + '">');
+  p.push(R(0, 0, W, H, { fill: paper }));
+  p.push(T(PAD, 24, '后天八卦 · 八宅游年', { size: 10, fill: sub, family: fam, ls: 2.5 }));
+  p.push(T(W - PAD, 24, '上南 · 下北', { size: 10, fill: sub, family: fam, anchor: 'end', ls: 2 }));
+  p.push(T(PAD, 58, fuweiName + '宅', { size: 30, fill: ink, weight: 700, family: fam }));
+  var titleW = tw(fuweiName + '宅', 30);
+  var chipX = PAD + titleW + 12;
+  p.push(R(chipX, 36, 56, 22, { rx: 11, fill: chipBg, stroke: chipBd, sw: 1 }));
+  p.push(T(chipX + 28, 51, zt, { size: 11, fill: chipTx, weight: 500, family: fam, anchor: 'middle' }));
+  var x = PAD;
+  var dirWord = isWei ? '大门在' : '大门朝';
+  p.push(T(x, 82, dirWord + doorDir, { size: 12, fill: sub, family: fam }));
+  x += tw(dirWord + doorDir, 12);
+  p.push(T(x, 82, ' · 伏位', { size: 12, fill: sub, family: fam }));
+  x += tw(' · 伏位', 12) + 4;
+  p.push(T(x, 82, fuweiName, { size: 12, fill: greenD, weight: 600, family: fam }));
+  var GY = 104;
+  for (var r = 0; r < 3; r++) {
+    for (var c = 0; c < 3; c++) {
+      var gx = PAD + c * (CELL + GAP), gy = GY + r * (CELL + GAP);
+      var cx = gx + CELL / 2;
+      var g = GRID3[r][c];
+      if (!g) {
+        p.push(R(gx, gy, CELL, CELL, { rx: 12, fill: '#FBF7EC', stroke: '#DCD3BF', sw: 1 }));
+        p.push(taichiSVG(cx, gy + 50, 27, ink, '#FBF7EC', 1.4));
+        p.push(T(cx, gy + 104, '中宫', { size: 9, fill: sub, family: fam, anchor: 'middle', ls: 2 }));
+        continue;
+      }
+      var st = starOf(fuweiName, g);
+      var isJi = STAR[st].isJi;
+      p.push(R(gx, gy, CELL, CELL, { rx: 12, fill: isJi ? '#EAF1EA' : '#F9EEEA', stroke: isJi ? '#C9D8CB' : '#E5C9BF', sw: 1 }));
+      p.push(T(cx, gy + 22, g, { size: 16, fill: ink, weight: 600, family: fam, anchor: 'middle' }));
+      p.push(T(cx, gy + 37, GUA[g].dir, { size: 9, fill: sub, family: fam, anchor: 'middle', ls: 1 }));
+      p.push(guaLines(cx, gy + 63, GUA[g].lines, { w: 42, gap: 10, h: 3.6, color: ink, opacity: 0.9 }));
+      var pw = tw(st, 11) + 18;
+      p.push(R(cx - pw / 2, gy + 82, pw, 20, { rx: 10, fill: isJi ? green : red }));
+      p.push(T(cx, gy + 96, st, { size: 11, fill: '#FFFFFF', weight: 500, family: fam, anchor: 'middle' }));
+    }
+  }
+  var ly = 488;
+  p.push(C(20, ly - 3.5, 4, { fill: green }));
+  p.push(T(30, ly, '四吉 · 生气 延年 天医 伏位', { size: 10, fill: greenD, family: fam }));
+  p.push(C(198, ly - 3.5, 4, { fill: red }));
+  p.push(T(208, ly, '四凶 · 祸害 六煞 五鬼 绝命', { size: 10, fill: redD, family: fam }));
+  var ay = 504, ah = 88;
+  p.push(R(PAD, ay, GW, ah, { rx: 12, fill: card, stroke: cardBd, sw: 1 }));
+  p.push(T(PAD + 14, ay + 22, '开门建议', { size: 11, fill: ink, weight: 600, family: fam }));
+  p.push(T(W - PAD - 14, ay + 22, '宜四吉 · 忌四凶', { size: 9, fill: sub, family: fam, anchor: 'end' }));
+  p.push(tagSVG(PAD + 14, ay + 36, '宜', green, '#FFFFFF', 'none', 3));
+  p.push(T(PAD + 42, ay + 48, ['生气','延年','天医'].map(function (s) { return s + ' · ' + dirOfStar(fuweiName, s); }).join(' ｜ '), { size: 9.5, fill: greenD, family: fam }));
+  p.push(tagSVG(PAD + 14, ay + 58, '忌', red, '#FFFFFF', 'none', 3));
+  p.push(T(PAD + 42, ay + 70, ['绝命','五鬼','六煞','祸害'].map(function (s) { return s + ' · ' + dirOfStar(fuweiName, s); }).join(' ｜ '), { size: 9.5, fill: redD, family: fam }));
+  p.push(R(PAD, 610, GW, 0.8, { fill: line }));
+  p.push(T(PAD, 630, '八宅游年盘 · ' + fuweiName + '宅 · ' + zt + ' · ' + (isWei ? '门位法' : '门向法'), { size: 9, fill: sub, family: fam }));
+  p.push(T(W - PAD, 630, dateStr, { size: 9, fill: sub, family: fam, anchor: 'end' }));
+  p.push('</svg>');
+  return p.join('');
+}
+/* CORE:END */
+
+var state = { mode: 'xiang', wei: '乾', xiang: '震' };
+var LS_MODE = 'bagua-mode-v1';
+var LS_WEI = 'bagua-wei-v1';
+var LS_XIANG = 'bagua-xiang-v1';
+var POS8 = ['坎','艮','震','巽','离','坤','兑','乾'];
+var toastTimer = null;
+
+function androidBridge() {
+  return (typeof window.AndroidBridge !== 'undefined') ? window.AndroidBridge : null;
+}
+function isIOS() {
+  var ua = navigator.userAgent || '';
+  if (/iPad|iPhone|iPod/.test(ua)) return true;
+  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+}
+function showImageSheet(dataUrl, name) {
+  var img = $('imgOut');
+  img.src = dataUrl;
+  img.alt = name;
+  $('imgSheet').hidden = false;
+}
+function $(id) { return document.getElementById(id); }
+function doorGua() { return state.mode === 'wei' ? state.wei : state.xiang; }
+function doorModeLabel() { return state.mode === 'wei' ? '门位法' : '门向法'; }
+function gridHTML(f) {
+  var out = [], r, c, g, st, isJi;
+  for (r = 0; r < 3; r++) {
+    for (c = 0; c < 3; c++) {
+      g = GRID3[r][c];
+      if (!g) {
+        out.push('<div class="cell center"><svg class="taichi" viewBox="0 0 56 56" aria-hidden="true">' +
+          taichiSVG(28, 28, 26, '#23211C', '#FBF7EC', 1.4) +
+          '</svg><span class="label">中宫</span></div>');
+        continue;
+      }
+      st = starOf(f, g);
+      isJi = STAR[st].isJi;
+      out.push('<button type="button" class="cell ' + (isJi ? 'ji' : 'xiong') + '" data-palace="' + g +
+        '" aria-label="' + g + '宫 · ' + GUA[g].dir + ' · ' + st + '"><span class="name">' + g +
+        '</span><span class="dir">' + GUA[g].dir + '</span>' +
+        '<svg class="trigram" viewBox="0 0 42 26" aria-hidden="true">' +
+        guaLines(21, 13, GUA[g].lines, { w: 42, gap: 10, h: 3.6, color: '#23211C', opacity: 0.9 }) +
+        '</svg><span class="pill">' + st + '</span></button>');
+    }
+  }
+  return out.join('');
+}
+function renderDoorOpts() {
+  var list = state.mode === 'wei' ? POS8 : ['震','离','兑','坎'];
+  var cur = doorGua();
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var g = list[i];
+    out.push('<button type="button" class="door-opt" data-gua="' + g + '" aria-pressed="' + (g === cur ? 'true' : 'false') + '"><span class="d">' + GUA[g].dir + '</span><span class="g">' + g + '</span></button>');
+  }
+  $('doorOpts').innerHTML = out.join('');
+  $('doorHint').textContent = state.mode === 'wei'
+    ? '门位法：大门在哪个卦，就以该卦为伏位（8 个卦位都可）'
+    : '门向法：按大门所朝方向定伏位，只取四正（不是门的位置）';
+  var mb = document.querySelectorAll('.mode-btn');
+  for (var j = 0; j < mb.length; j++) {
+    mb[j].setAttribute('aria-selected', mb[j].getAttribute('data-mode') === state.mode ? 'true' : 'false');
+  }
+}
+function adviceItemsHTML(f, stars) {
+  var out = [];
+  for (var i = 0; i < stars.length; i++) {
+    out.push('<span class="adv-item">' + stars[i] + ' · ' + dirOfStar(f, stars[i]) + '</span>');
+  }
+  return out.join('');
+}
+function render() {
+  var f = doorGua();
+  $('zhaiName').textContent = f + '宅';
+  var zt = zhaiType(f);
+  var chip = $('zhaiChip');
+  chip.textContent = zt;
+  chip.className = 'chip' + (zt === '东四宅' ? '' : ' west');
+  var dirWord = state.mode === 'wei' ? '大门在' : '大门朝';
+  $('subLine').innerHTML = dirWord + GUA[f].dir + ' · 伏位 <b class="v">' + f + '</b>';
+  $('grid').innerHTML = gridHTML(f);
+  $('adviceJi').innerHTML = adviceItemsHTML(f, ['生气','延年','天医']);
+  $('adviceXiong').innerHTML = adviceItemsHTML(f, ['绝命','五鬼','六煞','祸害']);
+  renderDoorOpts();
+}
+function openSheet(palace) {
+  var f = doorGua();
+  var st = starOf(f, palace);
+  var info = STAR[st];
+  $('sheetPalace').textContent = palace + '宫 · ' + GUA[palace].dir;
+  $('sheetBadge').textContent = info.isJi ? '吉星' : '凶星';
+  $('sheetBadge').className = 'badge' + (info.isJi ? '' : ' x');
+  $('sheetStar').textContent = st;
+  $('sheetMeta').textContent = '五行 ' + info.wuxing + ' · ' + info.gui;
+  $('sheetZhu').textContent = info.zhu;
+  $('sheetYi').textContent = info.yi;
+  $('sheetJi').textContent = info.ji;
+  $('sheetWrap').hidden = false;
+  document.body.classList.add('lock');
+}
+function closeSheet() {
+  var w = $('sheetWrap');
+  if (w.hidden) return;
+  w.hidden = true;
+  document.body.classList.remove('lock');
+}
+function toast(msg) {
+  var t = $('toast');
+  t.textContent = msg;
+  t.hidden = false;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.hidden = true; }, 1900);
+}
+function shareText() {
+  var f = doorGua();
+  var q = ['生气','延年','天医','伏位'].map(function (s) { return s + '·' + dirOfStar(f, s); }).join('、');
+  var x = ['祸害','六煞','五鬼','绝命'].map(function (s) { return s + '·' + dirOfStar(f, s); }).join('、');
+  var lines = [];
+  lines.push('八宅游年盘 · ' + f + '宅（' + zhaiType(f) + '）');
+  lines.push(doorModeLabel() + '：' + (state.mode === 'wei' ? '大门在' + GUA[f].dir : '大门朝' + GUA[f].dir) + ' · 伏位' + f);
+  lines.push('四吉：' + q);
+  lines.push('四凶：' + x);
+  lines.push('开门建议：宜 生气·' + dirOfStar(f, '生气') + ' / 延年·' + dirOfStar(f, '延年') +
+    ' / 天医·' + dirOfStar(f, '天医') + '；忌 绝命·' + dirOfStar(f, '绝命') +
+    ' / 五鬼·' + dirOfStar(f, '五鬼'));
+  return lines.join('\n');
+}
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', 'readonly');
+  ta.style.position = 'fixed';
+  ta.style.top = '-1000px';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  document.body.removeChild(ta);
+  toast(ok ? '已复制文案' : '复制失败，请长按选择');
+}
+function copyText(text) {
+  var bridge = androidBridge();
+  if (bridge && bridge.copyText) {
+    try { bridge.copyText(text); toast('已复制文案'); return; } catch (e) {}
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { toast('已复制文案'); }, function () { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+function downloadBlob(blob, name) {
+  var a = document.createElement('a');
+  var url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+}
+function downloadSVG(svg, name) {
+  downloadBlob(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }), name + '.svg');
+  toast('已导出 SVG 图');
+}
+function exportPNG() {
+  var f = doorGua();
+  var svg = buildExportSVG(f, state.mode, new Date());
+  var baseName = '八宅游年盘-' + f + '宅-' + doorModeLabel();
+  var bridge = androidBridge();
+  var url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
+  var img = new Image();
+  img.onload = function () {
+    try {
+      var canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 780;
+      canvas.height = img.naturalHeight || 1304;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#F6F1E7';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      if (bridge && bridge.savePng) {
+        URL.revokeObjectURL(url);
+        try {
+          bridge.savePng(canvas.toDataURL('image/png'), baseName);
+        } catch (e2) {
+          toast('保存失败，请用截图');
+        }
+        return;
+      }
+      if (isIOS()) {
+        URL.revokeObjectURL(url);
+        showImageSheet(canvas.toDataURL('image/png'), baseName);
+        return;
+      }
+      canvas.toBlob(function (blob) {
+        URL.revokeObjectURL(url);
+        if (blob) {
+          downloadBlob(blob, baseName + '.png');
+          toast('图片已生成，去下载目录看看');
+        } else {
+          downloadSVG(svg, baseName);
+        }
+      }, 'image/png');
+    } catch (e) {
+      URL.revokeObjectURL(url);
+      downloadSVG(svg, baseName);
+    }
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    downloadSVG(svg, baseName);
+  };
+  img.src = url;
+}
+function doPrint() {
+  var bridge = androidBridge();
+  if (bridge && bridge.printPage) {
+    try { bridge.printPage(); return; } catch (e) {}
+  }
+  if (isIOS()) { window.print(); return; }
+  var f = doorGua();
+  var svg = buildExportSVG(f, state.mode, new Date());
+  var w = window.open('', '_blank');
+  if (!w) { window.print(); return; }
+  var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>八宅游年盘</title>' +
+    '<style>@page{size:A4;margin:12mm}html,body{margin:0;padding:0;background:#fff}' +
+    'body{display:flex;justify-content:center}svg{width:176mm;height:auto;' +
+    '-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>' + svg + '</body></html>';
+  w.document.open();
+  w.document.write(doc);
+  w.document.close();
+  setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 500);
+}
+function saveState() {
+  try {
+    localStorage.setItem(LS_MODE, state.mode);
+    localStorage.setItem(LS_WEI, state.wei);
+    localStorage.setItem(LS_XIANG, state.xiang);
+  } catch (e) {}
+}
+function setMode(mode) {
+  if (mode !== 'wei' && mode !== 'xiang') return;
+  state.mode = mode;
+  saveState();
+  render();
+}
+function init() {
+  try {
+    var m = localStorage.getItem(LS_MODE);
+    if (m === 'wei' || m === 'xiang') state.mode = m;
+    var w = localStorage.getItem(LS_WEI);
+    if (w && GUA[w]) state.wei = w;
+    var x = localStorage.getItem(LS_XIANG);
+    if (x && ['震','离','兑','坎'].indexOf(x) >= 0) state.xiang = x;
+  } catch (e) {}
+  $('doorOpts').addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('.door-opt') : null;
+    if (!b) return;
+    if (state.mode === 'wei') state.wei = b.getAttribute('data-gua');
+    else state.xiang = b.getAttribute('data-gua');
+    saveState();
+    render();
+  });
+  $('modeSwitch').addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('.mode-btn') : null;
+    if (b) setMode(b.getAttribute('data-mode'));
+  });
+  $('grid').addEventListener('click', function (ev) {
+    var cell = ev.target.closest ? ev.target.closest('.cell[data-palace]') : null;
+    if (cell) openSheet(cell.getAttribute('data-palace'));
+  });
+  $('sheetClose').addEventListener('click', closeSheet);
+  $('imgClose').addEventListener('click', function () { $('imgSheet').hidden = true; });
+  $('sheetWrap').addEventListener('click', function (ev) {
+    if (ev.target.hasAttribute && ev.target.hasAttribute('data-close')) closeSheet();
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') closeSheet();
+  });
+  $('btnPng').addEventListener('click', exportPNG);
+  $('btnCopy').addEventListener('click', function () { copyText(shareText()); });
+  $('btnPrint').addEventListener('click', doPrint);
+  render();
+  try {
+    var t = selftest();
+    if (t.ok) console.log('[八宅规则] 自测通过：8/8');
+    else console.error('[八宅规则] 自测未通过', t.rows);
+  } catch (e) { console.error(e); }
+}
+document.addEventListener('DOMContentLoaded', init);
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
